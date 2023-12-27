@@ -17,6 +17,7 @@ public class Product {
   String description;
   double price;
   Category category;
+  Object features;
   List<ProductImage> images;
   // inventory
   String sku;

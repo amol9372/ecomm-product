@@ -10,6 +10,8 @@ import lombok.experimental.SuperBuilder;
 import org.ecomm.ecommweb.persistance.entity.BaseEntity;
 import org.hibernate.annotations.Type;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -27,7 +29,13 @@ public class EProduct extends BaseEntity {
   @JoinColumn(name = "category_id")
   ECategory category;
 
+  @Column(name = "category_tree")
+  String categoryTree;
+
   @Type(JsonType.class)
   @Column(columnDefinition = "jsonb")
   JsonNode features;
+
+  @OneToMany(mappedBy = "product")
+  List<EProductImage> productImages;
 }

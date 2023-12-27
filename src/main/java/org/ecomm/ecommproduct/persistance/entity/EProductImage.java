@@ -21,7 +21,7 @@ public class EProductImage extends BaseEntity {
   @Enumerated(EnumType.STRING)
   ProductImageType type;
 
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "product_id")
-  @ManyToOne
   EProduct product;
 }

@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface FeatureTemplateRepository extends JpaRepository<EFeatureTemplate, Integer> {
 
 
-
+    EFeatureTemplate findByCategoryId(Integer categoryId);
 }

@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
-public class AddProduct {
+public class AddProductRequest {
 
   String name;
   String description;
