@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class AddCategory {
+public class AddCategoryRequest {
   String name;
   Integer parentId;
 }

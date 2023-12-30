@@ -14,3 +14,7 @@ spring:
     uris: ${ELASTICSEARCH_URL}
     password: ${ELASTICSEARCH_PASSWORD}
     username: elastic
+
+logging:
+  level:
+    root: info

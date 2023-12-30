@@ -1,4 +1,4 @@
-package org.ecomm.ecommweb.persistance.entity;
+package org.ecomm.ecommproduct.persistance.entity;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

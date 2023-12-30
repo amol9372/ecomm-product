@@ -1,7 +1,7 @@
 package org.ecomm.ecommproduct.rest.controller.admin;
 
 import org.ecomm.ecommproduct.rest.model.Category;
-import org.ecomm.ecommproduct.rest.request.admin.AddCategory;
+import org.ecomm.ecommproduct.rest.request.admin.AddCategoryRequest;
 import org.ecomm.ecommproduct.rest.services.admin.AdminCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,8 +22,8 @@ public class AdminCategoryController {
 
   @ResponseStatus(HttpStatus.CREATED)
   @PostMapping
-  public void createCategory(@RequestBody AddCategory category) {
-    adminCategoryService.addCategory(category);
+  public void createCategory(@RequestBody AddCategoryRequest request) {
+    adminCategoryService.addCategory(request);
   }
 
   @ResponseStatus(HttpStatus.NO_CONTENT)

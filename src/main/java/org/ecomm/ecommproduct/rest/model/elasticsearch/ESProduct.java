@@ -1,17 +1,18 @@
 package org.ecomm.ecommproduct.rest.model.elasticsearch;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.*;
+
+import java.util.Map;
 
 @Getter
 @Setter
+@ToString
 @Builder
-@Document(indexName = "productv1")
+@NoArgsConstructor
+@AllArgsConstructor
+@Document(indexName = "productv1", writeTypeHint = WriteTypeHint.FALSE)
 public class ESProduct {
 
   @Id Integer id;
@@ -26,14 +27,14 @@ public class ESProduct {
   double price;
 
   @Field(type = FieldType.Object, name = "category")
-  Object category;
+  ESCategory category;
 
-  @Field(type = FieldType.Text, name = "categoryTree")
+  @Field(type = FieldType.Keyword, name = "category_tree")
   String categoryTree;
 
   @Field(type = FieldType.Object, name = "features")
   Object features;
 
   @Field(type = FieldType.Object, name = "inventory")
-  Object inventory;
+  ESInventory inventory;
 }

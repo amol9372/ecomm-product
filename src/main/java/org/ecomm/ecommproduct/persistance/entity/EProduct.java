@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import org.ecomm.ecommweb.persistance.entity.BaseEntity;
 import org.hibernate.annotations.Type;
 
 import java.util.List;

@@ -1,14 +1,14 @@
 package org.ecomm.ecommproduct.rest.services.admin;
 
+import static java.util.stream.Collectors.toList;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import jakarta.transaction.Transactional;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.ecomm.ecommproduct.exception.ErrorResponse;
 import org.ecomm.ecommproduct.exception.InvalidSchemaException;
@@ -17,16 +17,12 @@ import org.ecomm.ecommproduct.persistance.repository.CategoryRepository;
 import org.ecomm.ecommproduct.persistance.repository.FeatureTemplateRepository;
 import org.ecomm.ecommproduct.persistance.repository.InventoryRepository;
 import org.ecomm.ecommproduct.persistance.repository.ProductRepository;
-import org.ecomm.ecommproduct.rest.model.Inventory;
-import org.ecomm.ecommproduct.rest.model.elasticsearch.ESProduct;
 import org.ecomm.ecommproduct.rest.request.admin.AddProductRequest;
+import org.ecomm.ecommproduct.rest.services.ProductESService;
 import org.ecomm.ecommproduct.utils.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 @Slf4j
@@ -42,19 +38,21 @@ public class AdminProductServiceImpl implements AdminProductService {
 
   @Autowired FeatureTemplateRepository featureTemplateRepository;
 
-  @Autowired ElasticsearchOperations elasticsearchOperations;
-
   @Autowired AdminCategoryService adminCategoryService;
+
+  @Autowired ProductESService productESService;
 
   @Override
   @Transactional
   public void addProduct(AddProductRequest request) {
-    // TODO - name validation [with ElasticSearch]
-    // TODO - features validation
-    // update inventory
-    // save product
-    // TODO - save images & get s3 url
-    // save the entity in elasticsearch
+    /*
+    - TODO - name validation [with ElasticSearch]
+    - TODO - features validation
+    - update inventory
+    - save product
+    - TODO - save images & get s3 url
+    - save the entity in elasticsearch
+    */
     var category =
         categoryRepository
             .findById(request.getCategory())
@@ -102,7 +100,7 @@ public class AdminProductServiceImpl implements AdminProductService {
                 .productId(savedProduct.getId())
                 .build());
 
-    saveProductIndex(request, savedProduct, category, savedInventory);
+    productESService.saveProduct(savedProduct, savedInventory);
   }
 
   private String getCategoryTree(ECategory category) {
@@ -134,31 +132,6 @@ public class AdminProductServiceImpl implements AdminProductService {
         categoryTree.append(entity.getName()).append(" > "));
 
     return categoryTree;
-  }
-
-  private void saveProductIndex(
-      AddProductRequest product,
-      EProduct savedProduct,
-      ECategory category,
-      EInventory savedInventory) {
-    ESProduct esProduct =
-        ESProduct.builder()
-            .id(savedProduct.getId())
-            .features(product.getFeatures())
-            .price(product.getPrice())
-            .name(product.getName())
-            .description(product.getDescription())
-            .category(category)
-            .categoryTree(savedProduct.getCategoryTree())
-            .inventory(
-                Inventory.builder()
-                    .id(savedProduct.getId())
-                    .quantityAvailable(savedInventory.getQuantityAvailable())
-                    .sku(savedInventory.getSku())
-                    .build())
-            .build();
-
-    elasticsearchOperations.save(esProduct);
   }
 
   private void validateFeatureTemplate(AddProductRequest request, JsonNode features) {

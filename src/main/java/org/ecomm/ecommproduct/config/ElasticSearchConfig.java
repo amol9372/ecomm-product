@@ -2,6 +2,7 @@ package org.ecomm.ecommproduct.config;
 
 import java.time.Duration;
 import org.springframework.context.annotation.Configuration;
+
 import org.springframework.data.elasticsearch.client.ClientConfiguration;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfiguration;
 import org.springframework.data.elasticsearch.support.HttpHeaders;

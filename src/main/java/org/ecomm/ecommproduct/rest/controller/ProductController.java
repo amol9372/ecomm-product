@@ -1,25 +1,21 @@
 package org.ecomm.ecommproduct.rest.controller;
 
 import org.ecomm.ecommproduct.rest.model.Product;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.ecomm.ecommproduct.rest.request.pagination.PagedResponse;
+import org.ecomm.ecommproduct.rest.request.pagination.SearchRequest;
+import org.ecomm.ecommproduct.rest.services.ProductESService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("product")
 public class ProductController {
 
-    @PostMapping
-    public List<Product> searchProducts(){
-        return null;
-    }
+  @Autowired ProductESService productESService;
 
-    @GetMapping
-    public List<Product> getAllProducts(){
-        return null;
-    }
-
+  @PostMapping("search")
+  public PagedResponse<Product> searchProducts(@RequestBody SearchRequest request) {
+    
+    return productESService.searchProducts(request);
+  }
 }

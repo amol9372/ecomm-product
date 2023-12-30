@@ -17,5 +17,5 @@ import java.util.List;
 public class Filter {
 
     String field;
-    List<?> values;
+    List<String> values;
 }

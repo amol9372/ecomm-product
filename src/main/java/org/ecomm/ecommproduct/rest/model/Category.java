@@ -1,5 +1,6 @@
 package org.ecomm.ecommproduct.rest.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,6 +12,7 @@ import java.util.List;
 @Getter
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
+@AllArgsConstructor
 public class Category extends BaseModel {
 
     String name;

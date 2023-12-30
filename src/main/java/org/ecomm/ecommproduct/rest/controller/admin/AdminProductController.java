@@ -12,13 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("admin/product")
 public class AdminProductController {
 
-    // create offer - [can be different microservice]
-    @Autowired
-    AdminProductService adminProductService;
+  // create offer - [can be different microservice]
+  @Autowired AdminProductService adminProductService;
 
-    @PostMapping
-    public void addProduct(@RequestBody AddProductRequest product){
-        adminProductService.addProduct(product);
-    }
+  @PostMapping
+  public void addProduct(@RequestBody AddProductRequest request) {
+    adminProductService.addProduct(request);
+  }
 
 }

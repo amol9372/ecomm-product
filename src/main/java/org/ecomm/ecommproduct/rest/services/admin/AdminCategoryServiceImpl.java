@@ -3,7 +3,8 @@ package org.ecomm.ecommproduct.rest.services.admin;
 import org.ecomm.ecommproduct.persistance.entity.ECategory;
 import org.ecomm.ecommproduct.rest.model.Category;
 import org.ecomm.ecommproduct.persistance.repository.CategoryRepository;
-import org.ecomm.ecommproduct.rest.request.admin.AddCategory;
+import org.ecomm.ecommproduct.rest.request.admin.AddCategoryRequest;
+import org.ecomm.ecommproduct.utils.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     List<ECategory> eCategories = categoryRepository.findAll();
 
     // Add root nodes
-    eCategories.stream()
+    Utility.stream(eCategories)
         .filter(eCategory -> Objects.isNull(eCategory.getParentId()))
         .forEach(
             eCategory ->
@@ -43,7 +44,7 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
   }
 
   @Override
-  public void addCategory(AddCategory category) {
+  public void addCategory(AddCategoryRequest category) {
     ECategory eCategory =
         ECategory.builder().name(category.getName()).parentId(category.getParentId()).build();
 

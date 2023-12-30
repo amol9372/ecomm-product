@@ -1,5 +1,6 @@
 package org.ecomm.ecommproduct.rest.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,7 +12,8 @@ import java.util.List;
 @Getter
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
-public class Product {
+@AllArgsConstructor
+public class Product extends BaseModel {
 
   String name;
   String description;
@@ -22,4 +24,5 @@ public class Product {
   // inventory
   String sku;
   int quantity;
+  Inventory inventory;
 }
