@@ -51,8 +51,6 @@ public class ProductESServiceImpl implements ProductESService {
             .resultCount((int) searchHits.stream().count())
             .build();
 
-
-
     log.info("Criteria search results are ::: {}", searchHits.stream().count());
 
     return pagedResponse;
