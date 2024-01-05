@@ -22,6 +22,8 @@ public class EProduct extends BaseEntity {
   String name;
   String description;
   double price;
+
+  @Column(name = "brand_id")
   Integer brandId;
 
   @OneToOne
