@@ -1,11 +1,13 @@
 package org.ecomm.ecommproduct.persistance.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.vladmihalcea.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Type;
 
@@ -17,14 +19,15 @@ import java.util.List;
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @Table(name = "product")
+@ToString
 public class EProduct extends BaseEntity {
 
   String name;
   String description;
-  double price;
 
-  @Column(name = "brand_id")
-  Integer brandId;
+  @ManyToOne
+  @JoinColumn(name = "brand_id")
+  EBrand brand;
 
   @OneToOne
   @JoinColumn(name = "category_id")
@@ -39,4 +42,12 @@ public class EProduct extends BaseEntity {
 
   @OneToMany(mappedBy = "product")
   List<EProductImage> productImages;
+
+  @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JsonManagedReference
+  List<EProductVariant> variants;
+
+  @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JsonManagedReference
+  List<EInventory> inventories;
 }

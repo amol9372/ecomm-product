@@ -1,11 +1,10 @@
 package org.ecomm.ecommproduct.rest.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.ecomm.ecommproduct.persistance.entity.EInventory;
 import org.ecomm.ecommproduct.persistance.entity.EProduct;
 import org.ecomm.ecommproduct.rest.builder.ProductESBuilder;
 import org.ecomm.ecommproduct.rest.model.Product;
-import org.ecomm.ecommproduct.rest.model.elasticsearch.ESProduct;
+import org.ecomm.ecommproduct.rest.model.elasticsearch.ESProductVariant;
 import org.ecomm.ecommproduct.rest.request.pagination.PagedResponse;
 import org.ecomm.ecommproduct.rest.request.pagination.SearchRequest;
 import org.ecomm.ecommproduct.utils.ElasticSearchQueryBuilder;
@@ -25,23 +24,24 @@ public class ProductESServiceImpl implements ProductESService {
   @Autowired ElasticsearchOperations elasticsearchOperations;
 
   @Override
-  public void saveProduct(EProduct product, EInventory inventory) {
+  public void saveProduct(EProduct product) {
 
-    ESProduct esProduct = ProductESBuilder.with(product, inventory);
-    log.info("Saving product entity in the index ::: {}", esProduct);
-    elasticsearchOperations.save(esProduct);
+    List<ESProductVariant> esProductVariant = ProductESBuilder.with(product);
+
+    log.info("Saving product entities in the index ::: {}", (long) esProductVariant.size());
+    elasticsearchOperations.save(esProductVariant);
   }
 
   @Override
   public PagedResponse<Product> searchProducts(SearchRequest request) {
 
     NativeQuery searchQuery = ElasticSearchQueryBuilder.createSearchQuery(request);
-    SearchHits<ESProduct> searchHits = elasticsearchOperations.search(searchQuery, ESProduct.class);
+    SearchHits<ESProductVariant> searchHits = elasticsearchOperations.search(searchQuery, ESProductVariant.class);
 
-    List<ESProduct> esProducts =
+    List<ESProductVariant> esProductVariants =
         searchHits.getSearchHits().stream().map(SearchHit::getContent).toList();
 
-    var products = ProductESBuilder.with(esProducts);
+    var products = ProductESBuilder.with(esProductVariants);
 
     PagedResponse<Product> pagedResponse =
         PagedResponse.<Product>builder()

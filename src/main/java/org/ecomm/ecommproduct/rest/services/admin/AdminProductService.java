@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 @Service
 public interface AdminProductService {
 
+    void getProduct();
+
     void addProduct(AddProductRequest product);
 
 }

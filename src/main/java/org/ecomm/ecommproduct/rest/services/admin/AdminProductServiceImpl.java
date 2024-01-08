@@ -2,7 +2,6 @@ package org.ecomm.ecommproduct.rest.services.admin;
 
 import static java.util.stream.Collectors.toList;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import java.util.Arrays;
@@ -10,18 +9,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.ecomm.ecommproduct.exception.ErrorResponse;
-import org.ecomm.ecommproduct.exception.InvalidSchemaException;
 import org.ecomm.ecommproduct.persistance.entity.*;
-import org.ecomm.ecommproduct.persistance.repository.CategoryRepository;
-import org.ecomm.ecommproduct.persistance.repository.FeatureTemplateRepository;
-import org.ecomm.ecommproduct.persistance.repository.InventoryRepository;
-import org.ecomm.ecommproduct.persistance.repository.ProductRepository;
+import org.ecomm.ecommproduct.persistance.repository.*;
 import org.ecomm.ecommproduct.rest.request.admin.AddProductRequest;
 import org.ecomm.ecommproduct.rest.services.ProductESService;
 import org.ecomm.ecommproduct.utils.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,13 +27,19 @@ public class AdminProductServiceImpl implements AdminProductService {
 
   @Autowired ProductRepository productRepository;
 
-  @Autowired InventoryRepository inventoryRepository;
+  @Autowired BrandRepository brandRepository;
 
-  @Autowired FeatureTemplateRepository featureTemplateRepository;
+  //  @Autowired FeatureTemplateRepository featureTemplateRepository;
 
-  @Autowired AdminCategoryService adminCategoryService;
+  @Autowired MasterVariantRepository masterVariantRepository;
 
   @Autowired ProductESService productESService;
+
+  @Override
+  public void getProduct() {
+    List<EProduct> products = productRepository.findAll();
+    log.info("Products from DB ::: {}", products);
+  }
 
   @Override
   @Transactional
@@ -62,9 +61,6 @@ public class AdminProductServiceImpl implements AdminProductService {
                         "Product category does not exist, please use GET /admin/category API to fetch all categories"));
 
     String categoryTree = getCategoryTree(category);
-
-    JsonNode features = objectMapper.valueToTree(request.getFeatures());
-
     // validateFeatureTemplate(product, features);
 
     List<EProductImage> productImages =
@@ -73,34 +69,69 @@ public class AdminProductServiceImpl implements AdminProductService {
                 item ->
                     EProductImage.builder()
                         .imageUrl(item.getUrl())
-                        // .product(savedProduct)
                         .type(ProductImageType.PRODUCT_IMAGES)
                         .build())
             .collect(toList());
 
+
+
+    List<EInventory> inventories =
+        Utility.stream(request.getVariants())
+            .map(
+                item ->
+                    EInventory.builder()
+                        .sku(item.getSku())
+                        .quantityAvailable(item.getQuantity())
+                        .build())
+            .collect(toList());
+
+    List<EProductVariant> variants = getProductVariants(request);
+
+    EBrand eBrand =
+        brandRepository.findByNameAndBrandCategory(
+            request.getBrand().getName(), request.getBrand().getCategory());
+
     var eProduct =
         EProduct.builder()
             .name(request.getName())
-            .price(request.getPrice())
             .description(request.getDescription())
             .category(category)
+            .brand(eBrand)
             .categoryTree(categoryTree)
-            .features(features)
+            .features(objectMapper.valueToTree(request.getFeatures()))
             .productImages(productImages)
+            .variants(variants)
+            .inventories(inventories)
             .build();
+
+    variants.forEach(item -> item.setProduct(eProduct));
+    productImages.forEach(item -> item.setProduct(eProduct));
+    inventories.forEach(item -> item.setProduct(eProduct));
 
     EProduct savedProduct = productRepository.save(eProduct);
 
-    // Update the inventory
-    EInventory savedInventory =
-        inventoryRepository.save(
-            EInventory.builder()
-                .sku(request.getSku())
-                .quantityAvailable(request.getQuantity())
-                .productId(savedProduct.getId())
-                .build());
+    // setting the brand
+    savedProduct.setBrand(eBrand);
 
-    productESService.saveProduct(savedProduct, savedInventory);
+    log.info("Saved Product in DB ::: {}", savedProduct);
+    productESService.saveProduct(savedProduct);
+  }
+
+  private List<EProductVariant> getProductVariants(AddProductRequest request) {
+    EMasterVariant masterVariant = masterVariantRepository.findByCategoryId(request.getCategory());
+
+    List<EProductVariant> variants =
+        Utility.stream(request.getVariants())
+            .map(
+                item ->
+                    EProductVariant.builder()
+                        .variantId(masterVariant.getId())
+                        .featureValues(objectMapper.valueToTree(item.getFeatures()))
+                        .price(item.getPrice())
+                        .sku(item.getSku())
+                        .build())
+            .collect(Collectors.toList());
+    return variants;
   }
 
   private String getCategoryTree(ECategory category) {
@@ -134,22 +165,23 @@ public class AdminProductServiceImpl implements AdminProductService {
     return categoryTree;
   }
 
-  private void validateFeatureTemplate(AddProductRequest request, JsonNode features) {
-    var template = featureTemplateRepository.findByCategoryId(request.getCategory());
-
-    // match template features with request features
-    var templateFeatures = template.getFeatures();
-    boolean isRequestConsistentWithTemplate =
-        templateFeatures.fieldNames().equals(features.fieldNames());
-
-    if (!isRequestConsistentWithTemplate) {
-      throw new InvalidSchemaException(
-          HttpStatus.UNPROCESSABLE_ENTITY,
-          ErrorResponse.builder()
-              .code("product-invalid-schema")
-              .message(
-                  "Please use the correct template for features, use the GET /admin/template/{category-id} API to get the template")
-              .build());
-    }
-  }
+  //  private void validateFeatureTemplate(AddProductRequest request, JsonNode features) {
+  //    var template = featureTemplateRepository.findByCategoryId(request.getCategory());
+  //
+  //    // match template features with request features
+  //    var templateFeatures = template.getFeatures();
+  //    boolean isRequestConsistentWithTemplate =
+  //        templateFeatures.fieldNames().equals(features.fieldNames());
+  //
+  //    if (!isRequestConsistentWithTemplate) {
+  //      throw new InvalidSchemaException(
+  //          HttpStatus.UNPROCESSABLE_ENTITY,
+  //          ErrorResponse.builder()
+  //              .code("product-invalid-schema")
+  //              .message(
+  //                  "Please use the correct template for features, use the GET
+  // /admin/template/{category-id} API to get the template")
+  //              .build());
+  //    }
+  //  }
 }

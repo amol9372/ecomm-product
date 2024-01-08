@@ -14,6 +14,7 @@ spring:
     uris: ${ELASTICSEARCH_URL}
     password: ${ELASTICSEARCH_PASSWORD}
     username: elastic
+    connection-timeout: 5s
 
 logging:
   level:

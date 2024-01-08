@@ -1,8 +1,7 @@
 package org.ecomm.ecommproduct.persistance.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,8 +15,10 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "inventory")
 public class EInventory extends BaseEntity {
 
-    @Column(name = "product_id")
-    Integer productId;
+    @ManyToOne
+    @JsonBackReference
+    @JoinColumn(name = "product_id")
+    EProduct product;
 
     @Column(name = "sku")
     String sku;
