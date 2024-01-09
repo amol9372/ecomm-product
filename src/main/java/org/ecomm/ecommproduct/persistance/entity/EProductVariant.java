@@ -34,4 +34,5 @@ public class EProductVariant extends BaseEntity {
 
   @Column(name = "sku")
   String sku;
+
 }

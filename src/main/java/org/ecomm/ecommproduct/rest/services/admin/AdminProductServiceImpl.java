@@ -73,8 +73,6 @@ public class AdminProductServiceImpl implements AdminProductService {
                         .build())
             .collect(toList());
 
-
-
     List<EInventory> inventories =
         Utility.stream(request.getVariants())
             .map(

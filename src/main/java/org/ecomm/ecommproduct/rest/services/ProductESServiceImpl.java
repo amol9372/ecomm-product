@@ -3,7 +3,7 @@ package org.ecomm.ecommproduct.rest.services;
 import lombok.extern.slf4j.Slf4j;
 import org.ecomm.ecommproduct.persistance.entity.EProduct;
 import org.ecomm.ecommproduct.rest.builder.ProductESBuilder;
-import org.ecomm.ecommproduct.rest.model.Product;
+import org.ecomm.ecommproduct.rest.model.ProductVariantResponse;
 import org.ecomm.ecommproduct.rest.model.elasticsearch.ESProductVariant;
 import org.ecomm.ecommproduct.rest.request.pagination.PagedResponse;
 import org.ecomm.ecommproduct.rest.request.pagination.SearchRequest;
@@ -33,7 +33,7 @@ public class ProductESServiceImpl implements ProductESService {
   }
 
   @Override
-  public PagedResponse<Product> searchProducts(SearchRequest request) {
+  public PagedResponse<ProductVariantResponse> searchProducts(SearchRequest request) {
 
     NativeQuery searchQuery = ElasticSearchQueryBuilder.createSearchQuery(request);
     SearchHits<ESProductVariant> searchHits = elasticsearchOperations.search(searchQuery, ESProductVariant.class);
@@ -43,8 +43,8 @@ public class ProductESServiceImpl implements ProductESService {
 
     var products = ProductESBuilder.with(esProductVariants);
 
-    PagedResponse<Product> pagedResponse =
-        PagedResponse.<Product>builder()
+    PagedResponse<ProductVariantResponse> pagedResponse =
+        PagedResponse.<ProductVariantResponse>builder()
             .page(request.getPagination().getPageNo())
             .pageSize(request.getPagination().getPageSize())
             .items(products)

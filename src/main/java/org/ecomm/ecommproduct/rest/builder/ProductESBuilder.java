@@ -2,22 +2,20 @@ package org.ecomm.ecommproduct.rest.builder;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
-import org.ecomm.ecommproduct.persistance.entity.EInventory;
 import org.ecomm.ecommproduct.persistance.entity.EProduct;
 import org.ecomm.ecommproduct.persistance.entity.EProductVariant;
 import org.ecomm.ecommproduct.rest.model.Category;
 import org.ecomm.ecommproduct.rest.model.Inventory;
-import org.ecomm.ecommproduct.rest.model.Product;
+import org.ecomm.ecommproduct.rest.model.ProductVariantResponse;
 import org.ecomm.ecommproduct.rest.model.elasticsearch.ESCategory;
 import org.ecomm.ecommproduct.rest.model.elasticsearch.ESInventory;
 import org.ecomm.ecommproduct.rest.model.elasticsearch.ESProductVariant;
-import org.ecomm.ecommproduct.rest.request.admin.AddProductRequest;
+import org.ecomm.ecommproduct.rest.request.admin.Brand;
 import org.ecomm.ecommproduct.utils.Utility;
 
 @Slf4j
@@ -33,9 +31,9 @@ public class ProductESBuilder {
               var variantName = generateVariantName(product, item);
               ESInventory inventory = getVariantInventory(product, item);
 
-                Object mergedFeatures = transformFeaturesToObject(allFeatures);
+              Object mergedFeatures = transformFeaturesToObject(allFeatures);
 
-                return ESProductVariant.builder()
+              return ESProductVariant.builder()
                   .id(item.getId())
                   .productId(product.getId())
                   .features(mergedFeatures)
@@ -56,18 +54,18 @@ public class ProductESBuilder {
         .collect(Collectors.toList());
   }
 
-    private static Object transformFeaturesToObject(ObjectNode allFeatures) {
-        Object mergedFeatures;
-        var mapper = new ObjectMapper();
-        try {
-          mergedFeatures = mapper.treeToValue(allFeatures, Object.class);
-        } catch (JsonProcessingException e) {
-          throw new RuntimeException(e);
-        }
-        return mergedFeatures;
+  private static Object transformFeaturesToObject(ObjectNode allFeatures) {
+    Object mergedFeatures;
+    var mapper = new ObjectMapper();
+    try {
+      mergedFeatures = mapper.treeToValue(allFeatures, Object.class);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException(e);
     }
+    return mergedFeatures;
+  }
 
-    private static ESInventory getVariantInventory(EProduct product, EProductVariant item) {
+  private static ESInventory getVariantInventory(EProduct product, EProductVariant item) {
     return product.getInventories().stream()
         .filter(inventory -> inventory.getSku().equals(item.getSku()))
         .map(
@@ -102,10 +100,16 @@ public class ProductESBuilder {
     return allFeatures;
   }
 
-  public static Product with(ESProductVariant esProductVariant) {
-    return Product.builder()
+  public static ProductVariantResponse with(ESProductVariant esProductVariant) {
+    return ProductVariantResponse.builder()
         .id(esProductVariant.getId())
+        .productId(esProductVariant.getProductId())
         .features(esProductVariant.getFeatures())
+        .brand(
+            Brand.builder()
+                .name(esProductVariant.getName())
+                .category(esProductVariant.getBrandCategory())
+                .build())
         .price(esProductVariant.getPrice())
         .name(esProductVariant.getName())
         .description(esProductVariant.getDescription())
@@ -114,6 +118,7 @@ public class ProductESBuilder {
                 .name(esProductVariant.getCategory().getName())
                 .id(esProductVariant.getCategory().getId())
                 .build())
+        .categoryTree(esProductVariant.getCategoryTree())
         .inventory(
             Inventory.builder()
                 .id(esProductVariant.getInventory().getId())
@@ -123,7 +128,7 @@ public class ProductESBuilder {
         .build();
   }
 
-  public static List<Product> with(List<ESProductVariant> esProductVariants) {
+  public static List<ProductVariantResponse> with(List<ESProductVariant> esProductVariants) {
     return Utility.stream(esProductVariants)
         .map(ProductESBuilder::with)
         .collect(Collectors.toList());

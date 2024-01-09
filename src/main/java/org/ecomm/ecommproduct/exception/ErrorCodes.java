@@ -5,7 +5,9 @@ import java.util.Map;
 
 public class ErrorCodes {
 
-  private ErrorCodes() {}
+  public static final String NOT_FOUND = "not_found";
+
+    private ErrorCodes() {}
 
   // invalid schema - multiple codes
   public static final String INVALID_SCHEMA = "invalid_schema";
@@ -43,5 +45,6 @@ public class ErrorCodes {
         "User already exists with the same email, please use a different email");
     errorCodesMap.put(S3_EXCEPTION, "An exception occurred in S3");
     errorCodesMap.put(MISSING_PARTNER_HEADER, "Partner header is missing");
+    errorCodesMap.put(NOT_FOUND, "Not found");
   }
 }
