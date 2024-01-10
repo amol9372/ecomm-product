@@ -1,5 +1,6 @@
 package org.ecomm.ecommproduct.rest.request.admin;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 @Setter
@@ -9,7 +10,8 @@ import lombok.*;
 @AllArgsConstructor
 public class AddFeatureTemplate {
 
-    Integer categoryId;
-    Object features;
+  Integer categoryId;
 
+  @JsonProperty("feature_fields")
+  Object featureFields;
 }

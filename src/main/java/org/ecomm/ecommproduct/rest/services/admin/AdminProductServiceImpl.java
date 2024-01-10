@@ -60,7 +60,8 @@ public class AdminProductServiceImpl implements AdminProductService {
                     new RuntimeException(
                         "Product category does not exist, please use GET /admin/category API to fetch all categories"));
 
-    String categoryTree = getCategoryTree(category);
+    List<ECategory> eCategories = categoryRepository.findAll();
+    String categoryTree = getCategoryTree(category, eCategories);
     // validateFeatureTemplate(product, features);
 
     List<EProductImage> productImages =
@@ -83,7 +84,7 @@ public class AdminProductServiceImpl implements AdminProductService {
                         .build())
             .collect(toList());
 
-    List<EProductVariant> variants = getProductVariants(request);
+    List<EProductVariant> variants = getProductVariants(request, eCategories);
 
     EBrand eBrand =
         brandRepository.findByNameAndBrandCategory(
@@ -115,8 +116,11 @@ public class AdminProductServiceImpl implements AdminProductService {
     productESService.saveProduct(savedProduct);
   }
 
-  private List<EProductVariant> getProductVariants(AddProductRequest request) {
-    EMasterVariant masterVariant = masterVariantRepository.findByCategoryId(request.getCategory());
+  private List<EProductVariant> getProductVariants(
+      AddProductRequest request, List<ECategory> categories) {
+    EMasterVariant masterVariant =
+        findCategoryWithMasterVariant(
+            categories, null, ECategory.builder().id(request.getCategory()).build());
 
     List<EProductVariant> variants =
         Utility.stream(request.getVariants())
@@ -132,14 +136,31 @@ public class AdminProductServiceImpl implements AdminProductService {
     return variants;
   }
 
-  private String getCategoryTree(ECategory category) {
-    List<ECategory> eCategories = categoryRepository.findAll();
+  private String getCategoryTree(ECategory category, List<ECategory> eCategories) {
     var categoryTreeBuilder = createCategoryTree(eCategories, category, new StringBuilder());
 
     var categoryTree = Arrays.stream(categoryTreeBuilder.toString().split(" > ")).collect(toList());
     Collections.reverse(categoryTree);
 
     return categoryTree.stream().filter(s -> !s.isEmpty()).collect(Collectors.joining(" > "));
+  }
+
+  public EMasterVariant findCategoryWithMasterVariant(
+      List<ECategory> categories, EMasterVariant masterVariant, ECategory category) {
+
+    if (masterVariant != null) {
+      return masterVariant;
+    }
+
+    ECategory entity =
+        categories.stream()
+            .filter(item -> category.getId().equals(item.getId()))
+            .findFirst()
+            .orElseThrow();
+
+    EMasterVariant variant = masterVariantRepository.findByCategoryId(entity.getId());
+    return findCategoryWithMasterVariant(
+        categories, variant, ECategory.builder().id(entity.getParentId()).build());
   }
 
   private StringBuilder createCategoryTree(
