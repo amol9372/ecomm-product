@@ -22,7 +22,8 @@ public class EMasterVariant extends BaseEntity {
   @Column(name = "category_id")
   Integer categoryId;
 
+
   @Type(JsonType.class)
-  @Column(columnDefinition = "json")
-  JsonNode feature_names;
+  @Column(columnDefinition = "json", name = "feature_names")
+  JsonNode featureNames;
 }
