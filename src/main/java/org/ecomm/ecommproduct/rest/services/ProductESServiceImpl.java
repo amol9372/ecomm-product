@@ -45,8 +45,8 @@ public class ProductESServiceImpl implements ProductESService {
 
     PagedResponse<ProductVariantResponse> pagedResponse =
         PagedResponse.<ProductVariantResponse>builder()
-            .page(request.getPagination().getPageNo())
-            .pageSize(request.getPagination().getPageSize())
+            .page(request.getPage().getPageNo())
+            .pageSize(request.getPage().getPageSize())
             .items(products)
             .resultCount((int) searchHits.stream().count())
             .build();

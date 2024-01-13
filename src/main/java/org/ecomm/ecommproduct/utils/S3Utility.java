@@ -75,8 +75,7 @@ public class S3Utility {
   private PutObjectRequest getPutObjectRequest(MultipartFile file) {
     return PutObjectRequest.builder()
         .bucket(BUCKET_NAME)
-        .key(
-            "<add key here>".concat("/").concat(Objects.requireNonNull(file.getOriginalFilename())))
+        .key(Objects.requireNonNull(file.getOriginalFilename()))
         .build();
   }
 }

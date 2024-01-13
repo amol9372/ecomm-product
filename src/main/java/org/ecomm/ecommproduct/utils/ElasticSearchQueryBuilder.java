@@ -61,6 +61,7 @@ public class ElasticSearchQueryBuilder {
                         f.field(sort.getField())
                             .order(
                                 sort.getOrder().equals("asc") ? SortOrder.Asc : SortOrder.Desc)));
+
     return sortOptionsBuilder.build();
   }
 

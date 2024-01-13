@@ -15,6 +15,6 @@ import lombok.experimental.FieldDefaults;
 public class Pagination {
 
     int pageSize = Integer.MAX_VALUE;
-    int pageNo;
+    int pageNo = 0;
 }
 
