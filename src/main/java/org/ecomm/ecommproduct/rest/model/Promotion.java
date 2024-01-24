@@ -1,5 +1,6 @@
 package org.ecomm.ecommproduct.rest.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,8 +14,11 @@ public class Promotion extends BaseModel {
 
   String name;
   String description;
-  String appliedTo;
+  @JsonProperty("applied_to")
+  int appliedTo;
+  @JsonProperty("applied_to_type")
   String appliedToType;
+  @JsonProperty("expires_in")
   int expiresIn;
   int discount;
 }

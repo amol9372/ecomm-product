@@ -14,7 +14,7 @@ public enum PromoAppliedType {
 
   PromoAppliedType(String category) {}
 
-  static Map<String, PromoAppliedType> typeValueMap =
+  static final Map<String, PromoAppliedType> typeValueMap =
       Arrays.stream(PromoAppliedType.values()).collect(Collectors.toMap(Enum::name, type -> type));
 
   public static PromoAppliedType getPromoValue(String value) {

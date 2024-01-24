@@ -20,8 +20,8 @@ public class PromotionServiceImpl implements PromotionService {
             .name(promotion.getName())
             .description(promotion.getDescription())
             .expiresIn(promotion.getExpiresIn())
-            .appliedToType(promotion.getAppliedToType())
-            .appliedTo(PromoAppliedType.getPromoValue(promotion.getAppliedTo()))
+            .appliedToType(PromoAppliedType.CATEGORY)
+            .appliedTo(promotion.getAppliedTo())
             .status(PromotionStatus.ACTIVE)
             .build();
 

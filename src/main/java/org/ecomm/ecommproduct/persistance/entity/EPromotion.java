@@ -19,11 +19,11 @@ public class EPromotion extends BaseEntity {
   String description;
 
   @Column(name = "applied_to_type")
-  String appliedToType; // category, products, brand
+  int appliedTo; // actual product, category, brand
 
   @Enumerated(EnumType.STRING)
   @Column(name = "applied_to")
-  PromoAppliedType appliedTo; // actual product, category, brand
+  PromoAppliedType appliedToType; // category, products, brand
 
   @Column(name = "expires_in")
   int expiresIn; // days
