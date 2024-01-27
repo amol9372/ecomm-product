@@ -14,7 +14,6 @@ public interface ProductESService {
     
     void saveProduct(EProduct product);
 
-
     PagedResponse<ProductVariantResponse> searchProducts(SearchRequest request);
 
     List<ObjectNode> getCartProductDetails(String variantIds);

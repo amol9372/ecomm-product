@@ -79,6 +79,7 @@ public class ProductESServiceImpl implements ProductESService {
       ObjectNode jsonObject = mapper.createObjectNode();
       jsonObject.put("variantId", esProductVariant.getId());
       jsonObject.put("productId", esProductVariant.getProductId());
+      jsonObject.put("brand", esProductVariant.getBrand());
       jsonObject.put("name", esProductVariant.getName());
       jsonObject.put("imageUrl", "");
       jsonObject.put("price", esProductVariant.getPrice());
