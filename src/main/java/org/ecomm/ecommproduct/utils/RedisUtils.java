@@ -93,8 +93,9 @@ public class RedisUtils {
 
       return true;
     } catch (Exception e) {
-      assert connection != null;
-      connection.close();
+      if(Objects.nonNull(connection)){
+        connection.close();
+      }
       log.info("Redis connection failed ::: {}", e.getMessage());
       return false;
     }
