@@ -26,7 +26,7 @@ public class RedisUtils {
 
   @Autowired InventoryRepository inventoryRepository;
 
-  //  @Autowired ExecutorService executorService;
+  @Autowired ExecutorService executorService;
 
   @Autowired ConcurrentLinkedDeque<RInventory> concurrentLinkedDeque;
 

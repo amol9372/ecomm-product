@@ -25,9 +25,9 @@ public class EcommProductApplication {
     return new ConcurrentLinkedDeque<>();
   }
 
-//  @Bean
-//  public ExecutorService executorService(){
-//    return Executors.newFixedThreadPool(2);
-//  }
+  @Bean
+  public ExecutorService executorService(){
+    return Executors.newFixedThreadPool(2);
+  }
 }
 

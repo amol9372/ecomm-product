@@ -17,6 +17,6 @@ public interface InventoryRepository extends JpaRepository<EInventory, Integer> 
 
   @Modifying
   @Transactional
-    @Query("UPDATE EInventory SET quantityAvailable = :quantity WHERE sku = :sku")
+  @Query("UPDATE EInventory SET quantityAvailable = :quantity WHERE sku = :sku")
   void updateInventory(@Param("quantity") int quantity, @Param("sku") String sku);
 }
