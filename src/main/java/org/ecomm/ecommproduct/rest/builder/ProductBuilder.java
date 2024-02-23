@@ -1,10 +1,9 @@
 package org.ecomm.ecommproduct.rest.builder;
 
-import org.ecomm.ecommproduct.persistance.entity.EInventory;
-import org.ecomm.ecommproduct.persistance.entity.EProduct;
-import org.ecomm.ecommproduct.persistance.entity.EProductVariant;
+import org.ecomm.ecommproduct.persistance.entity.*;
 import org.ecomm.ecommproduct.rest.model.Category;
 import org.ecomm.ecommproduct.rest.model.ProductDetails;
+import org.ecomm.ecommproduct.rest.model.ProductImage;
 import org.ecomm.ecommproduct.rest.request.admin.Brand;
 import org.ecomm.ecommproduct.rest.request.admin.ProductVariant;
 import org.ecomm.ecommproduct.utils.Utility;
@@ -53,7 +52,19 @@ public class ProductBuilder {
         .sku(eProductVariant.getSku())
         .id(eProductVariant.getId())
         .features(eProductVariant.getFeatureValues())
+        .images(getProductImages(eProductVariant.getProductImages()))
         .quantity(quantity)
         .build();
+  }
+
+  public static List<ProductImage> getProductImages(List<EProductImage> images) {
+    return Utility.stream(images)
+        .map(
+            image ->
+                ProductImage.builder()
+                    .url(image.getImageUrl())
+                    .type(image.getType().name())
+                    .build())
+        .collect(Collectors.toList());
   }
 }

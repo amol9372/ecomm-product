@@ -10,6 +10,8 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.Type;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -30,9 +32,11 @@ public class EProductVariant extends BaseEntity {
   @Column(columnDefinition = "jsonb")
   JsonNode featureValues;
 
+  @OneToMany(mappedBy = "productVariant", fetch = FetchType.LAZY)
+  List<EProductImage> productImages;
+
   double price;
 
   @Column(name = "sku")
   String sku;
-
 }

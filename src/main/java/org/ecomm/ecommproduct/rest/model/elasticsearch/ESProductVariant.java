@@ -5,6 +5,8 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
@@ -43,6 +45,9 @@ public class ESProductVariant {
 
   @Field(type = FieldType.Object, name = "features")
   Object features;
+
+  @Field(type = FieldType.Object, name = "images")
+  List<String> images;
 
   @Field(type = FieldType.Object, name = "inventory")
   ESInventory inventory;

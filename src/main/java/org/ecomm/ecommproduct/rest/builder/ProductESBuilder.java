@@ -8,9 +8,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.ecomm.ecommproduct.persistance.entity.EProduct;
+import org.ecomm.ecommproduct.persistance.entity.EProductImage;
 import org.ecomm.ecommproduct.persistance.entity.EProductVariant;
+import org.ecomm.ecommproduct.persistance.entity.ProductImageType;
 import org.ecomm.ecommproduct.rest.model.Category;
 import org.ecomm.ecommproduct.rest.model.Inventory;
+import org.ecomm.ecommproduct.rest.model.ProductImage;
 import org.ecomm.ecommproduct.rest.model.ProductVariantResponse;
 import org.ecomm.ecommproduct.rest.model.elasticsearch.ESCategory;
 import org.ecomm.ecommproduct.rest.model.elasticsearch.ESInventory;
@@ -125,7 +128,20 @@ public class ProductESBuilder {
                 .quantityAvailable(esProductVariant.getInventory().getQuantityAvailable())
                 .sku(esProductVariant.getInventory().getSku())
                 .build())
+        .images(getProductImages(esProductVariant.getImages()))
         .build();
+  }
+
+  public static List<ProductImage> getProductImages(List<String> images) {
+
+    return Utility.stream(images)
+        .map(
+            image ->
+                ProductImage.builder()
+                    .url(image)
+                    .type(ProductImageType.PRODUCT_IMAGES.name())
+                    .build())
+        .collect(Collectors.toList());
   }
 
   public static List<ProductVariantResponse> with(List<ESProductVariant> esProductVariants) {

@@ -5,6 +5,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.ecomm.ecommproduct.rest.model.BaseModel;
+import org.ecomm.ecommproduct.rest.model.ProductImage;
+
+import java.util.List;
 
 @Setter
 @Getter
@@ -15,4 +18,5 @@ public class ProductVariant extends BaseModel {
   double price;
   String sku;
   int quantity;
+  List<ProductImage> images;
 }

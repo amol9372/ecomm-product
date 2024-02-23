@@ -98,13 +98,13 @@ public class AdminProductServiceImpl implements AdminProductService {
             .brand(eBrand)
             .categoryTree(categoryTree)
             .features(objectMapper.valueToTree(request.getFeatures()))
-            .productImages(productImages)
+//            .productImages(productImages)
             .variants(variants)
             .inventories(inventories)
             .build();
 
     variants.forEach(item -> item.setProduct(eProduct));
-    productImages.forEach(item -> item.setProduct(eProduct));
+    // productImages.forEach(item -> item.setProduct(eProduct));
     inventories.forEach(item -> item.setProduct(eProduct));
 
     EProduct savedProduct = productRepository.save(eProduct);

@@ -44,9 +44,9 @@ public class S3Utility {
     return s3Client;
   }
 
-  public String putObject(MultipartFile file) {
+  public String putObject(MultipartFile file, Integer variant) {
 
-    PutObjectRequest putOb = getPutObjectRequest(file);
+    PutObjectRequest putOb = getPutObjectRequest(file, variant);
     try {
       getClient().putObject(putOb, RequestBody.fromBytes(file.getBytes()));
       var s3key = putOb.getValueForField("Key", String.class).orElseThrow();
@@ -67,15 +67,15 @@ public class S3Utility {
     }
   }
 
-  public List<String> putObjects(List<MultipartFile> files) {
+  public List<String> putObjects(List<MultipartFile> files, Integer variant) {
 
-    return files.stream().map(this::putObject).collect(Collectors.toList());
+    return files.stream().map(multipartFile -> putObject(multipartFile, variant)).collect(Collectors.toList());
   }
 
-  private PutObjectRequest getPutObjectRequest(MultipartFile file) {
+  private PutObjectRequest getPutObjectRequest(MultipartFile file, Integer variant) {
     return PutObjectRequest.builder()
         .bucket(BUCKET_NAME)
-        .key(Objects.requireNonNull(file.getOriginalFilename()))
+        .key(String.valueOf(variant).concat("/").concat(Objects.requireNonNull(file.getOriginalFilename())))
         .build();
   }
 }

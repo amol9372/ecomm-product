@@ -89,4 +89,12 @@ public class ProductESServiceImpl implements ProductESService {
     }).collect(Collectors.toList());
 
   }
+
+  @Override
+  public void updateProductImages(String variantId, List<String> images) {
+
+      ESProductVariant productVariant = elasticsearchOperations.get(variantId, ESProductVariant.class);
+      productVariant.setImages(images);
+      elasticsearchOperations.update(productVariant);
+  }
 }
